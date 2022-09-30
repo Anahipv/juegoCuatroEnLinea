@@ -99,3 +99,96 @@ def find_streak(l, needle, n):
         return n <= count and streak
     else:
         return False
+
+def first_elements(l_of_ls):
+    ## list_first_element = []
+    ## for l in l_of_ls:
+    ##     list_first_element.append(l[0])
+    ## return list_first_element
+
+    """
+    Recibe una lista de listas y devuelve una lista con los primeros elementos de la original
+    """
+    #la solucion dada fue igual a la mia
+    
+    ### refactor
+
+    return nth_elements(l_of_ls, 0)
+
+def nth_elements(l_of_ls, n):
+    """
+    Recibe una lista de listas + una posicion y devuelve una lista con los elementos de la original en el indice indicado
+    """
+    list_first_element = []
+    for l in l_of_ls:
+        list_first_element.append(l[n])
+    return list_first_element
+
+    #la solucion dada fue igual a la mia
+
+def transpose(matrix):
+    """
+    Recibe una matriz y devuelve su transpuesta
+    """
+    length = len(matrix[0])
+    transposed = []
+    for i in range(length):
+        transposed.append(nth_elements(matrix, i))
+    return transposed
+
+    #la solucion dada fue igual a la mia
+
+def displace(l, distance, filler = None):
+    if distance == 0 or len(l) == 0:
+        return l
+    elif distance > 0:
+        ## i = 0
+        ## while i in range(distance) and i < len(l):
+        ##     l.insert(i, filler)
+        ##     l.pop()
+        ##     i +=1
+        ## return l
+        filling = [filler] * distance
+        res = filling + l
+        res = res[:-distance]
+        return res
+    else:
+        ## i = distance
+        ## while i in range(distance, 0) and i < len(l):
+        ##     l.insert(len(l), filler)
+        ##     l.pop(0)
+        ##     i += 1 
+        ## return l
+        filling = [filler] * abs(distance)
+        res = l + filling
+        res = res[abs(distance):]
+        return res
+
+def displace_matrix(matrix, filler = None):
+    #creamos una matriz vacia
+    m = []
+    #por cada columna de la matriz original la desplazamos su indice -1
+    for i in range(len(matrix)):
+        #añadimos la columna desplazada a m
+        m.append(displace(matrix[i], i - 1, filler))
+    #devolvemos m
+    return m
+
+    # return recorrer_matrix(matrix, displace())
+
+def reverse_list(l):
+    return list(reversed(l))
+
+def reverse_matrix(m):
+    rm = []
+    for l in m:
+        rm.append(reverse_list(l))
+    return rm
+
+    # return recorrer_matrix(m, reverse_list())
+
+# def recorrer_matrix(matrix, function):
+#     m = []
+#     for i in range(len(matrix)):
+#         m.append(function(m[i]))
+#     return m
