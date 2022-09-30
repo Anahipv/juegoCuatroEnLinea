@@ -13,11 +13,26 @@ class LinearBoard():
     None un espacio vacio
     """
 
+    @classmethod
+    def fromList(cls, list):
+        board = cls()
+        board._column = list
+        return board
+
     def __init__(self):
         ##self.line = []
 
         #Una lista de None
         self._column = [None for i in range(board_length)]
+    
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        else:
+            return self._column == other._column
+
+    def __hash__(self):
+        return hash(self._column)
     
     def add(self, x):
         """
