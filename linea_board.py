@@ -1,4 +1,4 @@
-from settings import board_length, victory_strike
+from settings import BOARD_LENGTH, VICTORY_STRIKE
 from list_utils import *
 
 ## comentarios con doble numeral mi solucion
@@ -23,7 +23,7 @@ class LinearBoard():
         ##self.line = []
 
         #Una lista de None
-        self._column = [None for i in range(board_length)]
+        self._column = [None for i in range(BOARD_LENGTH)]
     
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -48,7 +48,7 @@ class LinearBoard():
             self._column[i] = x
 
     def is_full(self):
-        ##if len(self.line) < board_length:  
+        ##if len(self.line) < BOARD_LENGTH:  
         ##    return False
         ##else:
         ##    return True
@@ -56,7 +56,7 @@ class LinearBoard():
         return self._column[-1] != None
 
     def is_victory(self, char):
-        return find_streak(self._column, char, victory_strike)
+        return find_streak(self._column, char, VICTORY_STRIKE)
 
     def is_tie(self, char1, char2):
         """

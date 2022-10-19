@@ -46,12 +46,3 @@ class BaseOracle():
         return ColumnRecommendation(index, classification)
 
 
-board1 =  SquareBoard.fromList([[None, None, None, None],
-                                 ['x', 'o', 'x', 'o'],
-                                 ['o', 'o', 'x', 'x'],
-                                 ['o', None, None, None]])
-
-rappel = BaseOracle()
-
-print(len(rappel.get_recommendation(board1, None)))
-print(rappel.get_recommendation(board1, None))

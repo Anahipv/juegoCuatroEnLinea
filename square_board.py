@@ -1,5 +1,5 @@
 from linea_board import LinearBoard
-from settings import board_length
+from settings import BOARD_LENGTH
 from list_utils import displace_matrix, reverse_matrix, transpose
 
 
@@ -18,7 +18,7 @@ class SquareBoard():
         return board
 
     def __init__(self):
-        self._columns = [LinearBoard() for i in range(board_length)]
+        self._columns = [LinearBoard() for i in range(BOARD_LENGTH)]
 
     def is_full(self):
         """
