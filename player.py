@@ -1,11 +1,25 @@
+import random
 from oracle import BaseOracle, ColumnClasification, ColumnRecommendation
 
 class Player():
 
-    def __init__(self, name, char, oracle = BaseOracle()):
+    def __init__(self, name, char = None, opponent = None, oracle = BaseOracle()):
         self.name = name
         self.char = char
         self._oracle = oracle
+        self.opponent = opponent
+        self.last_move = None
+
+    @property
+    def opponent(self):
+        return self._opponent
+
+    @opponent.setter
+    def opponent(self, other):
+        self._opponent = other
+        if other != None:
+            # assert other.char != self.char
+            other._opponent = self
 
     def play(self, board):
         """
@@ -30,6 +44,7 @@ class Player():
         Juega la ficha en la posición indicada
         """
         board.add(self.char, position)
+        self.last_move = position
 
     def _ask_oracle(self, board):
         """
@@ -42,12 +57,12 @@ class Player():
     def _choose(self, recommendations):
         #selecciona la mejor opcion de la lista de recomendaciones
         valid = list(filter(lambda x : x.classification != ColumnClasification.FULL, recommendations))
-        #agarramos la primera de la lista de validas
-        return valid[0]
+        #seleccionamos una al azar
+        return random.choice(valid)
 
 class HumanPlayer(Player):
     
-    def __init__(self, name, char):
+    def __init__(self, name, char = None):
         super().__init__(name, char)
 
     def _ask_oracle(self, board):

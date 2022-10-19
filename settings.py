@@ -1,2 +1,2 @@
-board_length = 4
-victory_strike = 3
+BOARD_LENGTH = 4
+VICTORY_STRIKE = 3
