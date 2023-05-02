@@ -6,6 +6,7 @@ from square_board import SquareBoard
 from list_utils import reverse_matrix
 from settings import BOARD_LENGTH
 from beautifultable import BeautifulTable
+from oracle import BaseOracle, SmartOracle
 
 class RoundType(Enum):
     COMPUTER_VS_COMPUTER = auto()
@@ -97,6 +98,9 @@ class Game():
         """
         #determinar el tipo de partida
         self.round_type = self._get_round_type()
+        #preguntar nivel de dificultad
+        if self.round_type == RoundType.COMPUTER_VS_HUMAN:
+            self._difficulty_level = self._get_difficulty_level()
         #crear la partida
         self.match = self._make_match()
 
@@ -110,17 +114,48 @@ class Game():
         else:
             return RoundType.COMPUTER_VS_HUMAN
 
+    def _get_difficulty_level(self):
+        """
+        Pregunta el nivel de dificultad del jugador computadora
+        """
+        print("""
+        Chose your opponent, human:
+
+        1) Bender: for clowns and wimps
+        2) T-800: you may regret it
+        3) T-1000: Don't even think about it!
+        """)
+
+        while True:
+            response = input('Please type 1, 2 or 3: ').strip()
+            if response == '1':
+                level = DifficultyLevel.LOW
+                break
+            elif response == '2':
+                level = DifficultyLevel.MEDIUM
+                break
+            else:
+                level = DifficultyLevel.HIGH
+                break
+        return level
+
     def _make_match(self):
         """
         Player 1 siempre sera robotico
         """
+
+        _levels = {DifficultyLevel.LOW : BaseOracle(), 
+                   DifficultyLevel.MEDIUM : SmartOracle(), 
+                   DifficultyLevel.HIGH : SmartOracle()}
+
         if self.round_type == RoundType.COMPUTER_VS_COMPUTER:
             #ambos jugadores son roboticos
-            player1 = Player('R2')
-            player2 = Player('3PO')
+            player1 = Player('R2', oracle=SmartOracle())
+            player2 = Player('3PO', oracle= SmartOracle())
         else:
             #hay un jugador humano
-            player1 = Player('R2')
+            player1 = Player('R2', oracle=_levels[self._difficulty_level])
             player2 = HumanPlayer(name=input("Ingresa tu nombre: "))
+            player2._oracle = _levels[self._difficulty_level]
         
         return Match(player1, player2)

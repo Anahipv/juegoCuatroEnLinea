@@ -1,5 +1,9 @@
 import random
 from oracle import BaseOracle, ColumnClasification, ColumnRecommendation
+from list_utils import all_same
+from beautifultable import BeautifulTable
+
+from settings import BOARD_LENGTH
 
 class Player():
 
@@ -55,10 +59,16 @@ class Player():
         return (best, recommendations)
 
     def _choose(self, recommendations):
-        #selecciona la mejor opcion de la lista de recomendaciones
+        #filtramos las opciones no validas
         valid = list(filter(lambda x : x.classification != ColumnClasification.FULL, recommendations))
-        #seleccionamos una al azar
-        return random.choice(valid)
+        #ordenamos por el valor de clasificacion
+        valid = sorted(valid, key=lambda x: x.classification.value, reverse=True)
+        #si son todas iguales elijo una al azar
+        if all_same(valid):
+            return random.choice(valid)
+        #sino elijo la mas deseable (sera la primera)
+        else:
+            return valid[0]
 
 class HumanPlayer(Player):
     
@@ -77,9 +87,14 @@ class HumanPlayer(Player):
                 position = int(raw)
                 return (ColumnRecommendation(position, None), None)
             elif raw == "h":
-                recommendations = self._oracle.get_recommendation(board, self)
-                best = self._choose(recommendations)
-                return (best, recommendations)
+                recommendations = self._oracle.get_recommendation(board, self)          
+                bt = BeautifulTable()
+                classifications = []
+                for i in range(len(recommendations)):
+                    classifications.append(recommendations[i].classification)
+                bt.rows.append(classifications)
+                bt.columns.header = [str(i) for i in range(BOARD_LENGTH)]
+                print(bt)
 
 #Funciones de validación de índice de columna
 def _is_within_column_range(board, column):
