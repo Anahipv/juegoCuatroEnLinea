@@ -139,6 +139,9 @@ def transpose(matrix):
     #la solucion dada fue igual a la mia
 
 def displace(l, distance, filler = None):
+    """
+    Desplaza una lista la distacia indicada y reemplaza los espacios desplazados por el filler dado
+    """
     if distance == 0 or len(l) == 0:
         return l
     elif distance > 0:
@@ -164,7 +167,19 @@ def displace(l, distance, filler = None):
         res = res[abs(distance):]
         return res
 
+def apply_function_to_matrix(matrix, function):
+    """
+    recorre una matrix y aplica la funcion dada
+    """
+    m = []
+    for i in range(len(matrix)):
+        m.append(function(matrix[i]))
+    return m
+
 def displace_matrix(matrix, filler = None):
+    """
+    Desaplza una matriz la distacia indicada y reemplaza los espacios desplazados por el filler dado
+    """
     #creamos una matriz vacia
     m = []
     #por cada columna de la matriz original la desplazamos su indice -1
@@ -174,21 +189,30 @@ def displace_matrix(matrix, filler = None):
     #devolvemos m
     return m
 
-    # return recorrer_matrix(matrix, displace())
+    # return apply_function_to_matrix(matrix, lambda x: displace(x, i -1, filler))
 
 def reverse_list(l):
     return list(reversed(l))
 
-def reverse_matrix(m):
-    rm = []
-    for l in m:
-        rm.append(reverse_list(l))
-    return rm
+def reverse_matrix(matrix):
+    # rm = []
+    # for l in m:
+    #     rm.append(reverse_list(l))
+    # return rm
 
-    # return recorrer_matrix(m, reverse_list())
+    return apply_function_to_matrix(matrix, reverse_list)
 
-# def recorrer_matrix(matrix, function):
-#     m = []
-#     for i in range(len(matrix)):
-#         m.append(function(m[i]))
-#     return m
+def all_same(l):
+    """
+    Comprueba que todos los elementos de una lista sean iguales y devuelve un booleano, si la lista esta vacia devuelve True
+    """
+    if l == []:
+        return True
+    else:
+        same = True
+        first = l[0]
+        for elm in l:
+            if elm != first:
+                same = False
+                break
+        return same
