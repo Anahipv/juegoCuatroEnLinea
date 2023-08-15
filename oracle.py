@@ -6,7 +6,7 @@ from square_board import SquareBoard
 
 class ColumnClasification(Enum):
     FULL = -1   #no se puede jugar
-    LOSE = 1    #podria perder
+    BAD = 1    #podria perder
     MAYBE = 10   #indeseable
     WIN = 100   #la mejor opcion: gano
 
@@ -66,7 +66,7 @@ class SmartOracle(BaseOracle):
             if self._is_winning_move(board, index, player):
                 recommendation.classification = ColumnClasification.WIN
             elif self._is_losing_move(board, index, player):
-                recommendation.classification = ColumnClasification.LOSE
+                recommendation.classification = ColumnClasification.BAD
         return recommendation
     
     def _is_winning_move(self, board, index, player):
@@ -92,10 +92,28 @@ class SmartOracle(BaseOracle):
         Si player juega en index, genera una jugada vencedora para el oponente? 
         """
         tmp_board = self._play_on_tmp_board(board, index, player)
-        will_lose = False
+        will_BAD = False
         for i in range(0, BOARD_LENGTH):
             if self._is_winning_move(tmp_board, i, player.opponent):
-                will_lose = True
+                will_BAD = True
                 break
-        return will_lose
+        return will_BAD
+    
+class MemoizingOracle(SmartOracle):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._past_recommendations = {}
+
+    def _make_key(self, board, player):
+        """
+        La clave combina el board y el player como un string
+        """
+        return f'{board.as_code()}@{player.char}'
+
+    def get_recommendation(self, board, player):
+        key = self._make_key(board, player)
+        if key not in self._past_recommendations:
+            self._past_recommendations[key] = super().get_recommendation(board, player)
+        return self._past_recommendations[key]
 
