@@ -2,7 +2,7 @@ import random
 from oracle import BaseOracle, ColumnClasification, ColumnRecommendation
 from list_utils import all_same
 from beautifultable import BeautifulTable
-
+from move import Move
 from settings import BOARD_LENGTH
 
 class Player():
@@ -41,14 +41,14 @@ class Player():
         #pregunto al oraculo
         (best, recommendations) = self._ask_oracle(board)
         #juego en la mejor opcion
-        self._play_on(board, best.index)
+        self._play_on(board, best.index, recommendations)
 
-    def _play_on(self, board, position):
+    def _play_on(self, board, position, recommendations):
         """
         Juega la ficha en la posición indicada
         """
         board.add(self.char, position)
-        self.last_move = position
+        self.last_move = Move(position, board.as_code(), recommendations, self)
 
     def _ask_oracle(self, board):
         """

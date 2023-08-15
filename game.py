@@ -6,7 +6,7 @@ from square_board import SquareBoard
 from list_utils import reverse_matrix
 from settings import BOARD_LENGTH
 from beautifultable import BeautifulTable
-from oracle import BaseOracle, SmartOracle
+from oracle import BaseOracle, SmartOracle, LearningOracle
 
 class RoundType(Enum):
     COMPUTER_VS_COMPUTER = auto()
@@ -55,7 +55,7 @@ class Game():
                 break
     
     def display_move(self, player):
-        print(f'\n{player.name} ({player.char}) has moved in column {player.last_move}')
+        print(f'\n{player.name} ({player.char}) has moved in column {player.last_move.position}')
 
     def display_board(self):
         """
@@ -146,12 +146,12 @@ class Game():
 
         _levels = {DifficultyLevel.LOW : BaseOracle(), 
                    DifficultyLevel.MEDIUM : SmartOracle(), 
-                   DifficultyLevel.HIGH : SmartOracle()}
+                   DifficultyLevel.HIGH : LearningOracle()}
 
         if self.round_type == RoundType.COMPUTER_VS_COMPUTER:
             #ambos jugadores son roboticos
-            player1 = Player('R2', oracle=SmartOracle())
-            player2 = Player('3PO', oracle= SmartOracle())
+            player1 = Player('R2', oracle=LearningOracle())
+            player2 = Player('3PO', oracle= LearningOracle())
         else:
             #hay un jugador humano
             player1 = Player('R2', oracle=_levels[self._difficulty_level])
