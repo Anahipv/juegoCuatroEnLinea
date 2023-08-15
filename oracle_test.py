@@ -34,10 +34,11 @@ def test_is_winning_move():
     loser = Player('Player2', 'o')
 
     empty = SquareBoard()
-    almost = SquareBoard.fromList([['o', 'x', 'o', None],
-                                   ['o', 'x', 'o', None],
-                                   ['x', None, None, None],
-                                   [None, None, None, None]])
+    almost = SquareBoard.fromList([['o', 'x', 'o', None, None],
+                                   ['o', 'x', 'o', None, None],
+                                   ['x', None, None, None, None],
+                                   ['o', 'x', None, None, None],
+                                   ['o', None, None, None, None]])
     
     oracle = SmartOracle()
 
@@ -59,10 +60,11 @@ def test_is_losing_move():
     winner.opponent = loser
 
     empty = SquareBoard()
-    almost = SquareBoard.fromList([['o', 'x', 'o', None],
-                                   ['o', 'x', 'o', None],
-                                   ['x', None, None, None],
-                                   [None, None, None, None]])
+    almost = SquareBoard.fromList([['o', 'x', 'o', None, None],
+                                   ['o', 'x', 'o', None, None],
+                                   ['x', 'x', None, None, None],
+                                   [None, None, None, None, None],
+                                   [None, None, None, None, None]])
     
     oracle = SmartOracle()
     
@@ -70,5 +72,4 @@ def test_is_losing_move():
         assert oracle._is_losing_move(empty, i, winner) == False
         assert oracle._is_losing_move(empty, i, loser) == False
 
-    assert oracle._is_losing_move(almost, 0, loser)
     assert oracle._is_losing_move(almost, 3, loser) 

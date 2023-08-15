@@ -1,6 +1,7 @@
 from linea_board import LinearBoard
 from settings import BOARD_LENGTH
-from list_utils import displace_matrix, reverse_matrix, transpose
+from list_utils import displace_matrix, reverse_matrix, transpose, replace_all_in_matrix, collapse_matrix
+from string_utils import explode_list_of_strings
 
 
 class SquareBoard():
@@ -16,6 +17,21 @@ class SquareBoard():
         board = cls()
         board._columns = list(map(lambda e : LinearBoard.fromList(e), list_of_lists))
         return board
+    
+    @classmethod
+    def fromBoardCode(cls, board_code):
+        return cls.fromBoardRawCode(board_code.raw_code)
+
+    @classmethod
+    def fromBoardRawCode(cls, board_raw_code):
+        """
+        Transforma una cadena en formato de BoardCode en una 
+        lista de LinearBoards y luego lo transfroma en un tablero cuadrado
+        """
+        list_of_strings = board_raw_code.split("|")
+        matrix = explode_list_of_strings(list_of_strings)
+        matrix = replace_all_in_matrix(matrix, '.', None)
+        return cls.fromList(matrix)
 
     def __init__(self):
         self._columns = [LinearBoard() for i in range(BOARD_LENGTH)]
@@ -38,18 +54,14 @@ class SquareBoard():
         """
         ### esto fue necesario porque transpose solo trabaja con matrices, LineBoard es un objeto no una lista
         # matrix = []
-        # l = []
-        # for lb in self._columns:
-        #     for char in list(lb):
-        #         l = l.append(char)
-        #     matrix = matrix.append(l)
-        # return matrix
-        # matrix = []
         # for lb in self._columns:
         #     matrix = matrix.append(lb._column)
         # return matrix
 
         return list(map(lambda x : x._column, self._columns))
+    
+    def as_code(self):
+        return BoardCode(self)
 
     def is_victory(self, char):
         return self._any_vertical_victory(char) or self._any_horizontal_victory(char) or self._any_rising_victory(char) or self._any_sinking_victory(char)
@@ -77,7 +89,7 @@ class SquareBoard():
         return temporal._any_sinking_victory(char)
 
 
-    
+  
     # dunders
     
     def __repr__(self):
@@ -94,4 +106,26 @@ class SquareBoard():
 
     def __hash__(self):
         return hash(self._columns)
+    
 
+
+class BoardCode:
+
+    def __init__(self, board):
+        self._raw_code = collapse_matrix(board.as_matrix())
+
+    @property
+    def raw_code(self):
+        return self._raw_code
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        else:
+            return self.raw_code == other.raw_code
+
+    def __hash__(self):
+        return hash(self.raw_code)
+
+    def __repr__(self):
+        return f'{self.__class__}: {self.raw_code}'

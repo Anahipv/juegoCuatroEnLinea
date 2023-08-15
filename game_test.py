@@ -9,17 +9,17 @@ def test_creation():
 def test_is_game_over():
 
     game = Game()
-    win_x = SquareBoard().fromList([['o', 'x', 'x', 'x', ],
-                                        [None, None, None, None, ],
-                                        [None, None, None, None, ],
-                                        [None, None, None, None, ],
-                                        [None, None, None, None, ]])
+    win_x = SquareBoard().fromList([['o', 'x', 'x', 'x', 'x'],
+                                        [None, None, None, None, None ],
+                                        [None, None, None, None, None],
+                                        [None, None, None, None, None],
+                                        [None, None, None, None, None]])
 
-    win_o = SquareBoard().fromList([['x', 'o', 'x', 'o', ],
-                                        ['x', 'x', 'o', None, ],
-                                        ['o', 'o', None, None, ],
-                                        ['o', 'x', None, None, ],
-                                        ['x', None, None, None, ]])
+    win_o = SquareBoard().fromList([['x', 'o', 'x', 'o','o'],
+                                        ['x', 'x', 'o', None, None ],
+                                        ['o', 'o', None, None, None],
+                                        ['o', 'x', None, None, None],
+                                        ['x', None, None, None, None]])
 
     unfinished = SquareBoard().fromList([['x', 'o', None, None, ],
                                         ['o', 'x', None, None, ],

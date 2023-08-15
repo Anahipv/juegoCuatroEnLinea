@@ -216,3 +216,44 @@ def all_same(l):
                 same = False
                 break
         return same
+
+def collapse_list(l, empty = '.'):
+    """
+    Comprime los elementos de una lista a un string, si un elemento es None lo reemplaza por el parametro empty
+    """
+    l_str = ''
+    for elm in l:
+        if elm == None:
+            l_str += empty
+        else:
+            l_str += str(elm)
+    return l_str
+
+def collapse_matrix(matrix):
+    """
+    Comprime los elementos de una matriz a un string, separa las listas con |
+    """
+    l_str = ''
+    for l in matrix:
+        l_str += collapse_list(l)
+        l_str += '|'
+    l_str = l_str[:-1]
+    return l_str
+
+def replace_all_in_list(l, elm1, elm2):
+    """
+    Recibe una lista y reemplaza el elemento 1 por el elemento 2
+    """
+    new_l = []
+    for elm in l:
+        if elm == elm1:
+            new_l.append(elm2)
+        else:
+            new_l.append(elm)
+    return new_l
+
+def replace_all_in_matrix(matrix, elm1, elm2):
+    """
+    Recibe una matriz y reemplaza el elemento 1 por el elemento 2
+    """
+    return list(map(lambda l : replace_all_in_list(l, elm1, elm2), matrix))
