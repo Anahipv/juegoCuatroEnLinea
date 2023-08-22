@@ -1,10 +1,10 @@
 from enum import Enum
 from copy import deepcopy
 from settings import BOARD_LENGTH
-
 from square_board import SquareBoard
+from functools import reduce
 
-class ColumnClasification(Enum):
+class ColumnClassification(Enum):
     FULL = -1   #no se puede jugar
     BAD = 1    #podria perder
     MAYBE = 10   #indeseable
@@ -52,31 +52,39 @@ class BaseOracle():
         """
         Clasifica una columna como FULL or MAYBE y retorna una ColumnRecommendation
         """
-        classification = ColumnClasification.MAYBE
+        classification = ColumnClassification.MAYBE
         if board._columns[index].is_full():
-            classification = ColumnClasification.FULL
+            classification = ColumnClassification.FULL
         
         return ColumnRecommendation(index, classification)
+    
+    def no_good_options(self, board, player):
+
+        columnRecommendations = self.get_recommendation(board, player)
+        #result = reduce(lambda accum, rec : accum + ((rec.classification == ColumnClassification.WIN) or (rec.classification == ColumnClassification.MAYBE)), columnRecommendations, True )
+        result = True
+        for rec in columnRecommendations:
+            if (rec.classification == ColumnClassification.WIN) or (rec.classification == ColumnClassification.MAYBE):
+                result = False
+                break
+        return result
     
 class SmartOracle(BaseOracle):
 
     def _get_column_recommendation(self, board, index, player):
         recommendation =  super()._get_column_recommendation(board, index, player)
-        if recommendation.classification == ColumnClasification.MAYBE:
+        if recommendation.classification == ColumnClassification.MAYBE:
             if self._is_winning_move(board, index, player):
-                recommendation.classification = ColumnClasification.WIN
+                recommendation.classification = ColumnClassification.WIN
             elif self._is_losing_move(board, index, player):
-                recommendation.classification = ColumnClasification.BAD
+                recommendation.classification = ColumnClassification.BAD
         return recommendation
     
     def _is_winning_move(self, board, index, player):
         """
         Determina si un movimiento es una jugada ganadora
         """
-        # hago una copia del tablero
-        #juego en ella
         tmp = self._play_on_tmp_board(board, index, player)
-        #determino si hay una victoria para player o no
         return tmp.is_victory(player.char)
     
     def _play_on_tmp_board(self, board, index, player):
@@ -112,7 +120,7 @@ class MemoizingOracle(SmartOracle):
         return f'{board_code}@{player.char}'
 
     def get_recommendation(self, board, player):
-        key = self._make_key(board._as_code(), player)
+        key = self._make_key(board.as_code(), player)
         if key not in self._past_recommendations:
             self._past_recommendations[key] = super().get_recommendation(board, player)
         return self._past_recommendations[key]
@@ -122,7 +130,7 @@ class LearningOracle(MemoizingOracle):
     def update_to_bad(self, board_code, player, position):
         key = self._make_key(board_code, player)
         recommendation = self.get_recommendation(SquareBoard.fromBoardCode(board_code), player)
-        recommendation[position] = ColumnRecommendation(position, ColumnClasification.BAD)
+        recommendation[position] = ColumnRecommendation(position, ColumnClassification.BAD)
         self._past_recommendations[key] = recommendation
 
 

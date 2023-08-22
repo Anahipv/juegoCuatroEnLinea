@@ -1,5 +1,5 @@
 import random
-from oracle import BaseOracle, ColumnClasification, ColumnRecommendation
+from oracle import BaseOracle, ColumnClassification, ColumnRecommendation
 from list_utils import all_same
 from beautifultable import BeautifulTable
 from move import Move
@@ -12,7 +12,7 @@ class Player():
         self.char = char
         self._oracle = oracle
         self.opponent = opponent
-        self.last_move = None
+        self.last_moves = []
 
     @property
     def opponent(self):
@@ -29,15 +29,6 @@ class Player():
         """
         Elige la mejor columna de aquellas que recomienda el oraculo y juega
         """
-        ## Primera aproximacion ##
-        #obtener las recomendaciones
-        #recommendations = self._oracle.get_recommendation(board, self)
-        #selecciona la mejor de todas
-        #best = self._choose(recommendations)
-        #juega en ella
-        #board.add(self.char, best.index)
-
-        ## Refactor ##
         #pregunto al oraculo
         (best, recommendations) = self._ask_oracle(board)
         #juego en la mejor opcion
@@ -48,7 +39,10 @@ class Player():
         Juega la ficha en la posición indicada
         """
         board.add(self.char, position)
-        self.last_move = Move(position, board.as_code(), recommendations, self)
+        self.last_moves.insert(0, Move(position, board.as_code(), recommendations, self))
+
+    def on_lose(self):
+        pass
 
     def _ask_oracle(self, board):
         """
@@ -60,7 +54,7 @@ class Player():
 
     def _choose(self, recommendations):
         #filtramos las opciones no validas
-        valid = list(filter(lambda x : x.classification != ColumnClasification.FULL, recommendations))
+        valid = list(filter(lambda x : x.classification != ColumnClassification.FULL, recommendations))
         #ordenamos por el valor de clasificacion
         valid = sorted(valid, key=lambda x: x.classification.value, reverse=True)
         #si son todas iguales elijo una al azar
@@ -95,6 +89,16 @@ class HumanPlayer(Player):
                 bt.rows.append(classifications)
                 bt.columns.header = [str(i) for i in range(BOARD_LENGTH)]
                 print(bt)
+
+class ReportingPlayer(Player):
+
+    def on_lose(self):
+        """
+        Avisa al oráculo que su última recomendación no fue buena
+        """
+        board_code = self.last_moves.board_code
+        position = self.last_moves.position
+        self._oracle.update_to_bad(board_code, self.char, position)
 
 #Funciones de validación de índice de columna
 def _is_within_column_range(board, column):

@@ -1,6 +1,6 @@
 
 from list_utils import *
-from oracle import ColumnClasification, ColumnRecommendation
+from oracle import ColumnClassification, ColumnRecommendation
 
 def test_find_one():
     needle = 1
@@ -91,8 +91,8 @@ def test_all_same():
     assert all_same([1,2,3,4]) == False
     assert all_same([[],[],[],[]])
     assert all_same([])
-    assert all_same([ColumnRecommendation(0, ColumnClasification.WIN), ColumnRecommendation(2, ColumnClasification.WIN)])
-    assert all_same([ColumnRecommendation(1, ColumnClasification.MAYBE), ColumnRecommendation(1, ColumnClasification.WIN)]) == False
+    assert all_same([ColumnRecommendation(0, ColumnClassification.WIN), ColumnRecommendation(2, ColumnClassification.WIN)])
+    assert all_same([ColumnRecommendation(1, ColumnClassification.MAYBE), ColumnRecommendation(1, ColumnClassification.WIN)]) == False
 
 def test_collapse_list():
     assert collapse_list([]) == ''

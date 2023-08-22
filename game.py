@@ -1,7 +1,7 @@
 import pyfiglet
 from match import Match
 from enum import Enum, auto
-from player import Player, HumanPlayer
+from player import Player, HumanPlayer, ReportingPlayer
 from square_board import SquareBoard
 from list_utils import reverse_matrix
 from settings import BOARD_LENGTH
@@ -19,7 +19,7 @@ class DifficultyLevel(Enum):
 
 class Game():
 
-    def __init__(self, round_type = RoundType.COMPUTER_VS_COMPUTER, match = Match(Player('chip'), Player('chop'))):
+    def __init__(self, round_type = RoundType.COMPUTER_VS_COMPUTER, match = Match(ReportingPlayer('chip'), ReportingPlayer('chop'))):
         self.round_type = round_type
         self.match = match
         self.board = SquareBoard()
@@ -55,7 +55,7 @@ class Game():
                 break
     
     def display_move(self, player):
-        print(f'\n{player.name} ({player.char}) has moved in column {player.last_move.position}')
+        print(f'\n{player.name} ({player.char}) has moved in column {player.last_moves[0].position}')
 
     def display_board(self):
         """
@@ -150,11 +150,11 @@ class Game():
 
         if self.round_type == RoundType.COMPUTER_VS_COMPUTER:
             #ambos jugadores son roboticos
-            player1 = Player('R2', oracle=LearningOracle())
-            player2 = Player('3PO', oracle= LearningOracle())
+            player1 = ReportingPlayer('R2', oracle=LearningOracle())
+            player2 = ReportingPlayer('3PO', oracle= LearningOracle())
         else:
             #hay un jugador humano
-            player1 = Player('R2', oracle=_levels[self._difficulty_level])
+            player1 = ReportingPlayer('R2', oracle=_levels[self._difficulty_level])
             player2 = HumanPlayer(name=input("Ingresa tu nombre: "))
             player2._oracle = _levels[self._difficulty_level]
         

@@ -10,10 +10,10 @@ def test_base_oracle():
                                  ['o', 'o', 'x', 'x'],
                                  ['o', None, None, None]])
 
-    expected = [ColumnRecommendation(0, ColumnClasification.MAYBE),
-                ColumnRecommendation(1, ColumnClasification.FULL),
-                ColumnRecommendation(2, ColumnClasification.FULL),
-                ColumnRecommendation(3, ColumnClasification.MAYBE),]
+    expected = [ColumnRecommendation(0, ColumnClassification.MAYBE),
+                ColumnRecommendation(1, ColumnClassification.FULL),
+                ColumnRecommendation(2, ColumnClassification.FULL),
+                ColumnRecommendation(3, ColumnClassification.MAYBE),]
 
     rappel = BaseOracle()
 
@@ -22,12 +22,12 @@ def test_base_oracle():
     assert rappel.get_recommendation(board, None) == expected
 
 def test_equality():
-    cr = ColumnRecommendation(2, ColumnClasification.MAYBE)
+    cr = ColumnRecommendation(2, ColumnClassification.MAYBE)
 
     assert cr == cr
-    assert cr == ColumnRecommendation(2, ColumnClasification.MAYBE)
-    assert cr != ColumnRecommendation(2, ColumnClasification.WIN)
-    assert cr != ColumnRecommendation(3, ColumnClasification.FULL)
+    assert cr == ColumnRecommendation(2, ColumnClassification.MAYBE)
+    assert cr != ColumnRecommendation(2, ColumnClassification.WIN)
+    assert cr != ColumnRecommendation(3, ColumnClassification.FULL)
 
 def test_is_winning_move():
     winner = Player('Player1', 'x')
@@ -73,3 +73,17 @@ def test_is_losing_move():
         assert oracle._is_losing_move(empty, i, loser) == False
 
     assert oracle._is_losing_move(almost, 3, loser) 
+
+def test_no_good_options():
+    x = Player('X', char='x')
+    o = Player('O', char='o', opponent=x)
+
+    oracle = SmartOracle()
+
+    maybe = SquareBoard.fromBoardRawCode('.....|o....|.....|.....|.....')
+    bad_and_full = SquareBoard.fromBoardRawCode('x....|ooo..|oo...|xoxox|xoxox')
+    all_bad = SquareBoard.fromBoardRawCode('x....|ooo..|oox..|xoox.|x....')
+
+    assert oracle.no_good_options(maybe, x) == False
+    assert oracle.no_good_options(bad_and_full, x)
+    assert oracle.no_good_options(all_bad, x)
